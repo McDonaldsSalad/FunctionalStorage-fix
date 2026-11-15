@@ -93,9 +93,14 @@ public class CompactingUtil {
         results.add(new Result(stack, 1));
 
         Result current = stack.isEmpty() ? new Result(ItemStack.EMPTY, 0) : findLowerTier(stack);
-        for (int i = 0; i < slot && !current.getResult().isEmpty(); i++) {
-            results.addFirst(current);
-            current = findLowerTier(current.getResult());
+        for (int i = 0; i < slot; i++) {
+            if (!current.getResult().isEmpty()) {
+                results.addFirst(current);
+                current = findLowerTier(current.getResult());
+            } else {
+                // Preserve empty lower tiers so the clicked item stays in its selected slot.
+                results.addFirst(new Result(ItemStack.EMPTY, 1));
+            }
         }
 
         current = stack.isEmpty() ? new Result(ItemStack.EMPTY, 0) : findUpperTier(stack);
